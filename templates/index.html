@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Status Updater</title>
+</head>
+<body>
+  <h2>Current Status: <span id="displayStatus">Loading...</span></h2>
+  <form action="/update_status" method="POST">
+    <select name="status" id="status" onchange="toggleCustom()">
+      <option value="FREE">FREE</option>
+      <option value="⛔ BUSY ⛔">⛔ BUSY ⛔</option>
+      <option value="📞CALL📞">📞CALL📞</option>
+      <option value="📅 MEETING 📅">📅 MEETING 📅</option>
+      <option value="🚨 DND 🚨">🚨 DND 🚨</option>
+      <option value="👋 OUT 👋">👋 OUT 👋</option>
+      <option value="Other">Other...</option>
+    </select><br><br>
+    <input type="text" name="custom" id="customInput" placeholder="Enter custom status" style="display:none;">
+    <br><br>
+    <button type="submit">Set Status</button>
+  </form>
+
+  <script>
+    const currentStatus = {{ current_status | tojson }};
+    document.getElementById('displayStatus').innerText = currentStatus;
+
+    const dropdown = document.getElementById("status");
+    const input = document.getElementById("customInput");
+
+    const predefined = Array.from(dropdown.options).map(o => o.value);
+
+    window.onload = () => {
+      if (predefined.includes(currentStatus)) {
+        dropdown.value = currentStatus;
+        input.style.display = "none";
+      } else {
+        dropdown.value = "Other";
+        input.style.display = "block";
+        input.value = currentStatus;
+      }
+    };
+
+    function toggleCustom() {
+      input.style.display = dropdown.value === "Other" ? "block" : "none";
+      if (dropdown.value !== "Other") {
+        input.value = "";
+      }
+    }
+  </script>
+</body>
+</html>
